@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% block extra_css %}
+  <link href="{% static 'CSS/Admincss/staff.css' %}" rel="stylesheet"/>
+{% endblock %}
+<div id="nex-toast-container"></div>
+{# ── MODAL OVERLAY ── #}
+<div class="nex-modal-overlay" id="nexModal">
+  <div class="nex-modal">
+    <div class="nex-modal-icon-wrap success" id="nexModalIcon">
+      <i class="ti ti-check"></i>
+    </div>
+    <div class="nex-modal-title" id="nexModalTitle">Success!</div>
+    <div class="nex-modal-body"  id="nexModalBody">Staff member created successfully.</div>
+    <button class="nex-modal-btn" id="nexModalBtn" onclick="closeNexModal()">Got it</button>
+  </div>
+</div>
+{% if messages %}
+<script>
+  window._nexMessages = [
+    {% for msg in messages %}
+      {"type":"{{ msg.tags|default:'success' }}","text":"{{ msg|escapejs }}"}{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ];
+</script>
+{% endif %}
+
+<div id="mainContent">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="hamburger" onclick="toggleSidebar()">
+      <i class="ti ti-menu-2"></i>
+    </button>
+    <div class="topbar-left">
+      <div class="page-title">Create Staff</div>
+      <div class="topbar-date" id="topbarDate"></div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-icon"><i class="ti ti-bell"></i></div>
+      <div class="topbar-icon"><i class="ti ti-search"></i></div>
+    </div>
+  </header>
+
+  <!-- PAGE BODY -->
+  <main class="page-body">
+    <form method="POST" class="staff-card">
+      {% csrf_token %}
+
+      <!-- Avatar Preview -->
+      <div class="avatar-section">
+        <div class="avatar-circle-lg" id="avatarCircle">P</div>
+        <div>
+          <div class="avatar-title">Profile Form </div>
+          <div class="avatar-sub"></div>
+        </div>
+      </div>
+
+      <!-- Personal Info -->
+      <div class="section-label">Personal Info</div>
+      <div class="form-grid">
+
+        <div class="field">
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" name="name" id="nameInput"
+                 placeholder="e.g. Rahul Sharma"
+                 value="{{ form.name.value|default:'' }}"
+                 oninput="updateAvatar()" required>
+          {% if form.name.errors %}
+            <span class="field-error">{{ form.name.errors.0 }}</span>
+          {% endif %}
+        </div>
+
+        <div class="field">
+          <label>Mobile No <span class="req">*</span></label>
+          <input type="text" name="mobile_no"
+                 placeholder="+91 98765 43210"
+                 value="{{ form.mobile_no.value|default:'' }}" required>
+          {% if form.mobile_no.errors %}
+            <span class="field-error">{{ form.mobile_no.errors.0 }}</span>
+          {% endif %}
+        </div>
+
+        <div class="field">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" name="email"
+                 placeholder="rahul@nexpos.in"
+                 value="{{ form.email.value|default:'' }}" required>
+          {% if form.email.errors %}
+            <span class="field-error">{{ form.email.errors.0 }}</span>
+          {% endif %}
+        </div>
+
+        <div class="field">
+          <label>Password <span class="req">*</span></label>
+          <input type="password" name="password"
+                 placeholder="Min. 8 characters" required>
+          {% if form.password.errors %}
+            <span class="field-error">{{ form.password.errors.0 }}</span>
+          {% endif %}
+        </div>
+
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Role & Branch -->
+      <div class="section-label">Role & Branch</div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Assign Role <span class="req">*</span></label>
+          <select name="role">
+            <option value="">-- Select Role --</option>
+            {% for role in roles %}
+              <option value="{{ role.id }}"
+                {% if form.role.value == role.id|stringformat:"s" %}selected{% endif %}>
+                {{ role.role_name }}
+              </option>
+            {% endfor %}
+          </select>
+          {% if form.role.errors %}
+            <span class="field-error">{{ form.role.errors.0 }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Active Toggle -->
+      <div class="section-label">Status</div>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Account Active</div>
+          <div class="toggle-sub">Staff can log in immediately</div>
+        </div>
+        <label class="nex-toggle">
+          <input type="checkbox" name="is_active"
+                 {% if form.is_active.value %}checked{% endif %}>
+          <span class="nex-slider"></span>
+        </label>
+      </div>
+
+      <!-- Buttons -->
+      <div class="btn-row">
+        <a href="{% url 'dashboard' %}" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary">
+          <i class="ti ti-user-plus"></i> Create Staff Member
+        </button>
+      </div>
+
+    </form>
+  </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* ── Avatar ── */
+function updateAvatar() {
+  const val = document.getElementById('nameInput').value.trim();
+  const parts = val.split(' ').filter(Boolean);
+  let init = '?';
+  if (parts.length >= 2) init = parts[0][0].toUpperCase() + parts[1][0].toUpperCase();
+  else if (parts.length === 1) init = parts[0].slice(0, 2).toUpperCase();
+  document.getElementById('avatarCircle').textContent = init;
+}
+
+/* ── Toast System ── */
+const NEX_ICONS = {
+  success: 'ti-circle-check',
+  error:   'ti-circle-x',
+  warning: 'ti-alert-triangle',
+  info:    'ti-info-circle',
+};
+const NEX_TITLES = {
+  success: 'Success!',
+  error:   'Error!',
+  warning: 'Warning!',
+  info:    'Info',
+};
+
+function showNexToast(message, type = 'success') {
+  const container = document.getElementById('nex-toast-container');
+  const toast = document.createElement('div');
+  toast.className = `nex-toast ${type}`;
+
+  toast.innerHTML = `
+    <div class="nex-toast-inner">
+      <div class="nex-toast-icon"><i class="ti ${NEX_ICONS[type] || 'ti-circle-check'}"></i></div>
+      <div class="nex-toast-body">
+        <div class="nex-toast-title">${NEX_TITLES[type] || 'Notice'}</div>
+        <div class="nex-toast-msg">${message}</div>
+      </div>
+      <button class="nex-toast-close" onclick="dismissToast(this.closest('.nex-toast'))">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+    <div class="nex-toast-progress"><div class="nex-toast-bar"></div></div>
+  `;
+
+  container.appendChild(toast);
+  requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
+
+  // Auto close after 5s
+  const t = setTimeout(() => dismissToast(toast), 5000);
+  toast._timer = t;
+}
+
+function dismissToast(toast) {
+  if (!toast) return;
+  clearTimeout(toast._timer);
+  toast.classList.remove('show');
+  toast.classList.add('hide');
+  setTimeout(() => toast.remove(), 400);
+}
+
+/* ── Modal System ── */
+function showNexModal(message, type = 'success', title = null) {
+  const overlay = document.getElementById('nexModal');
+  const iconWrap = document.getElementById('nexModalIcon');
+  const titleEl  = document.getElementById('nexModalTitle');
+  const bodyEl   = document.getElementById('nexModalBody');
+  const btn      = document.getElementById('nexModalBtn');
+
+  // Reset classes
+  iconWrap.className = `nex-modal-icon-wrap ${type}`;
+  iconWrap.innerHTML = `<i class="ti ${NEX_ICONS[type] || 'ti-circle-check'}"></i>`;
+  titleEl.textContent = title || NEX_TITLES[type] || 'Notice';
+  bodyEl.textContent  = message;
+
+  // Btn color
+  const colors = {
+    success: 'linear-gradient(135deg,#22c55e,#16a34a)',
+    error:   'linear-gradient(135deg,#ef4444,#b91c1c)',
+    warning: 'linear-gradient(135deg,#f59e0b,#b45309)',
+    info:    'linear-gradient(135deg,#3b82f6,#1d4ed8)',
+  };
+  btn.style.background = colors[type] || colors.success;
+
+  overlay.classList.add('show');
+}
+
+function closeNexModal() {
+  document.getElementById('nexModal').classList.remove('show');
+}
+
+// Close modal on overlay click
+document.getElementById('nexModal').addEventListener('click', function(e) {
+  if (e.target === this) closeNexModal();
+});
+
+/* ── Fire Django messages on load ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const msgs = window._nexMessages || [];
+  if (!msgs.length) return;
+
+  msgs.forEach((m, i) => {
+    // Determine clean type from Django tags
+    let type = 'success';
+    if (m.type.includes('error'))   type = 'error';
+    else if (m.type.includes('warning')) type = 'warning';
+    else if (m.type.includes('info'))    type = 'info';
+
+    // Delay each toast slightly if multiple
+    setTimeout(() => showNexToast(m.text, type), i * 300);
+  });
+
+  // Show modal for first message
+  const first = msgs[0];
+  let type = 'success';
+  if (first.type.includes('error'))   type = 'error';
+  else if (first.type.includes('warning')) type = 'warning';
+  else if (first.type.includes('info'))    type = 'info';
+  showNexModal(first.text, type);
+});
+</script>
+{% endblock %}

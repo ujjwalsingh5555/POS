@@ -1,0 +1,343 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div id="mainContent">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="hamburger" onclick="toggleSidebar()" aria-label="Open menu">
+      <i class="ti ti-menu-2"></i>
+    </button>
+    <div>
+      <div class="page-title">Dashboard</div>
+      <div class="page-sub" id="topbarDate">Loading...</div>
+    </div>
+    <div class="topbar-right">
+      <a href="#" class="btn-ghost d-none d-sm-flex">
+        <i class="ti ti-calendar" style="font-size:13px"></i> Today
+      </a>
+      <div class="notif-wrap">
+        <i class="ti ti-bell"></i>
+        <div class="notif-dot"></div>
+      </div>
+      <a href="#" class="btn-primary-pos d-none d-md-flex">
+        <i class="ti ti-plus" style="font-size:13px"></i> New Sale
+      </a>
+    </div>
+  </header>
+  <!-- PAGE BODY -->
+  <main class="page-content">
+
+    <!-- ── QUICK ACTIONS (mobile/tablet) ── -->
+    <div class="mb-4 fade-up">
+      <div class="section-title">Quick Actions</div>
+      <div class="row g-2">
+        <div class="col-3">
+          <a href="#" class="qa-btn">
+            <i class="ti ti-shopping-bag" style="color:#9D7FF5"></i>
+            <span>New Sale</span>
+          </a>
+        </div>
+        <div class="col-3">
+          <a href="#" class="qa-btn">
+            <i class="ti ti-receipt" style="color:var(--green)"></i>
+            <span>Orders</span>
+          </a>
+        </div>
+        <div class="col-3">
+          <a href="#" class="qa-btn">
+            <i class="ti ti-package" style="color:var(--amber)"></i>
+            <span>Products</span>
+          </a>
+        </div>
+        <div class="col-3">
+          <a href="#" class="qa-btn">
+            <i class="ti ti-chart-bar" style="color:var(--red)"></i>
+            <span>Reports</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── METRIC CARDS ── -->
+    <div class="mb-4">
+      <div class="section-title">Today's Overview</div>
+      <div class="row g-3">
+        <!-- Revenue -->
+        <div class="col-12 col-sm-6 col-xl-3 fade-up delay-1">
+          <div class="metric-card" style="--m-accent:linear-gradient(90deg,#7C5CFC,#B47FFF);--m-icon-bg:#1A1540">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="metric-icon-box">
+                <i class="ti ti-currency-rupee" style="color:#9D7FF5"></i>
+              </div>
+              <span class="change-badge change-up">
+                <i class="ti ti-trending-up" style="font-size:11px"></i> +18.4%
+              </span>
+            </div>
+            <div class="metric-val">₹2,84,560</div>
+            <div class="metric-label">Total Revenue</div>
+            <div class="metric-bar-track"><div class="metric-bar-fill" style="width:72%"></div></div>
+          </div>
+        </div>
+        <!-- Orders -->
+        <div class="col-12 col-sm-6 col-xl-3 fade-up delay-2">
+          <div class="metric-card" style="--m-accent:linear-gradient(90deg,#4ADE80,#22C55E);--m-icon-bg:rgba(74,222,128,.12)">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="metric-icon-box">
+                <i class="ti ti-shopping-bag" style="color:var(--green)"></i>
+              </div>
+              <span class="change-badge change-up">
+                <i class="ti ti-trending-up" style="font-size:11px"></i> +6.2%
+              </span>
+            </div>
+            <div class="metric-val">1,847</div>
+            <div class="metric-label">Total Orders</div>
+            <div class="metric-bar-track"><div class="metric-bar-fill" style="width:58%;background:linear-gradient(90deg,#4ADE80,#22C55E)"></div></div>
+          </div>
+        </div>
+        <!-- Customers -->
+        <div class="col-12 col-sm-6 col-xl-3 fade-up delay-3">
+          <div class="metric-card" style="--m-accent:linear-gradient(90deg,#F9A825,#FCD34D);--m-icon-bg:rgba(252,211,77,.12)">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="metric-icon-box">
+                <i class="ti ti-users" style="color:var(--amber)"></i>
+              </div>
+              <span class="change-badge change-up">
+                <i class="ti ti-trending-up" style="font-size:11px"></i> +3.8%
+              </span>
+            </div>
+            <div class="metric-val">3,204</div>
+            <div class="metric-label">Customers</div>
+            <div class="metric-bar-track"><div class="metric-bar-fill" style="width:45%;background:linear-gradient(90deg,#F9A825,#FCD34D)"></div></div>
+          </div>
+        </div>
+        <!-- Low Stock -->
+        <div class="col-12 col-sm-6 col-xl-3 fade-up delay-4">
+          <div class="metric-card" style="--m-accent:linear-gradient(90deg,#F08080,#E25342);--m-icon-bg:rgba(240,128,128,.12)">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="metric-icon-box">
+                <i class="ti ti-package" style="color:var(--red)"></i>
+              </div>
+              <span class="change-badge change-down">
+                <i class="ti ti-trending-down" style="font-size:11px"></i> -2.1%
+              </span>
+            </div>
+            <div class="metric-val">84</div>
+            <div class="metric-label">Low Stock Items</div>
+            <div class="metric-bar-track"><div class="metric-bar-fill" style="width:28%;background:linear-gradient(90deg,#F08080,#E25342)"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CHARTS ROW ── -->
+    <div class="row g-3 mb-4">
+      <!-- Revenue Bar Chart -->
+      <div class="col-12 col-lg-8 fade-up delay-2">
+        <div class="pos-card">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+            <div>
+              <div class="pos-card-title">Revenue Overview</div>
+              <div class="pos-card-sub">Daily sales this week</div>
+            </div>
+            <span class="card-chip">Weekly</span>
+          </div>
+          <div class="chart-canvas-wrap" style="height:200px">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Donut Chart -->
+      <div class="col-12 col-lg-4 fade-up delay-3">
+        <div class="pos-card">
+          <div class="mb-3">
+            <div class="pos-card-title">Sales by Category</div>
+            <div class="pos-card-sub">Product breakdown</div>
+          </div>
+          <div class="donut-wrap">
+            <div style="width:160px;height:160px;position:relative">
+              <canvas id="donutChart"></canvas>
+              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none">
+                <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff">₹2.8L</div>
+                <div style="font-size:10px;color:var(--text-muted)">Total</div>
+              </div>
+            </div>
+            <div style="width:100%">
+              <div class="legend-item"><div class="legend-dot" style="background:#7C5CFC"></div><div class="legend-label">Electronics</div><div class="legend-pct">44%</div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#4ADE80"></div><div class="legend-label">Clothing</div><div class="legend-pct">26%</div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#FCD34D"></div><div class="legend-label">Food &amp; Grocery</div><div class="legend-pct">18%</div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#F08080"></div><div class="legend-label">Others</div><div class="legend-pct">12%</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ORDERS + ACTIVITY ── -->
+    <div class="row g-3 mb-4">
+      <!-- Recent Orders -->
+      <div class="col-12 col-lg-7 fade-up delay-3">
+        <div class="pos-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div>
+              <div class="pos-card-title">Recent Orders</div>
+              <div class="pos-card-sub">Latest transactions today</div>
+            </div>
+            <a href="#" class="btn-ghost" style="font-size:11px;padding:5px 11px">View All</a>
+          </div>
+          <div class="table-responsive-pos">
+            <table class="pos-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th class="d-none d-sm-table-cell">Items</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#POS-4821</td>
+                  <td>Rahul Sharma</td>
+                  <td class="d-none d-sm-table-cell">3 items</td>
+                  <td class="td-amount">₹4,250</td>
+                  <td><span class="status-pill s-paid">Paid</span></td>
+                </tr>
+                <tr>
+                  <td>#POS-4820</td>
+                  <td>Priya Gupta</td>
+                  <td class="d-none d-sm-table-cell">1 item</td>
+                  <td class="td-amount">₹12,500</td>
+                  <td><span class="status-pill s-paid">Paid</span></td>
+                </tr>
+                <tr>
+                  <td>#POS-4819</td>
+                  <td>Amit Kumar</td>
+                  <td class="d-none d-sm-table-cell">5 items</td>
+                  <td class="td-amount">₹8,100</td>
+                  <td><span class="status-pill s-pending">Pending</span></td>
+                </tr>
+                <tr>
+                  <td>#POS-4818</td>
+                  <td>Sneha Verma</td>
+                  <td class="d-none d-sm-table-cell">2 items</td>
+                  <td class="td-amount">₹3,680</td>
+                  <td><span class="status-pill s-refund">Refund</span></td>
+                </tr>
+                <tr>
+                  <td>#POS-4817</td>
+                  <td>Vikram Singh</td>
+                  <td class="d-none d-sm-table-cell">4 items</td>
+                  <td class="td-amount">₹6,400</td>
+                  <td><span class="status-pill s-paid">Paid</span></td>
+                </tr>
+                <tr>
+                  <td>#POS-4816</td>
+                  <td>Kavya Reddy</td>
+                  <td class="d-none d-sm-table-cell">2 items</td>
+                  <td class="td-amount">₹9,750</td>
+                  <td><span class="status-pill s-paid">Paid</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Activity -->
+      <div class="col-12 col-lg-5 fade-up delay-4">
+        <div class="pos-card">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <div class="pos-card-title">Live Activity</div>
+              <div class="pos-card-sub">Real-time updates</div>
+            </div>
+            <div class="live-dot"></div>
+          </div>
+          <div>
+            <div class="activity-item">
+              <div class="act-icon" style="background:var(--accent-bg)"><i class="ti ti-receipt" style="color:#9D7FF5"></i></div>
+              <div>
+                <div class="act-title">New order placed</div>
+                <div class="act-time">2 min ago · Counter 3</div>
+              </div>
+              <div class="act-amt" style="color:var(--green)">+₹4,250</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-icon" style="background:var(--green-bg)"><i class="ti ti-credit-card" style="color:var(--green)"></i></div>
+              <div>
+                <div class="act-title">Payment received</div>
+                <div class="act-time">5 min ago · UPI</div>
+              </div>
+              <div class="act-amt" style="color:var(--green)">+₹12,500</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-icon" style="background:var(--red-bg)"><i class="ti ti-arrow-back-up" style="color:var(--red)"></i></div>
+              <div>
+                <div class="act-title">Refund processed</div>
+                <div class="act-time">18 min ago · #4818</div>
+              </div>
+              <div class="act-amt" style="color:var(--red)">-₹3,680</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-icon" style="background:var(--amber-bg)"><i class="ti ti-alert-triangle" style="color:var(--amber)"></i></div>
+              <div>
+                <div class="act-title">Low stock alert</div>
+                <div class="act-time">32 min ago · 3 items</div>
+              </div>
+              <div class="act-amt" style="color:var(--amber);font-size:11px">Alert</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-icon" style="background:var(--accent-bg)"><i class="ti ti-user-plus" style="color:#9D7FF5"></i></div>
+              <div>
+                <div class="act-title">New customer added</div>
+                <div class="act-time">1 hr ago · Walk-in</div>
+              </div>
+              <div class="act-amt" style="color:#9D7FF5;font-size:11px">+1</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TOP PRODUCTS + PAYMENT METHOD ── -->
+    <div class="row g-3 mb-4">
+      <!-- Top Products -->
+      <div class="col-12 col-md-7 fade-up delay-4">
+        <div class="pos-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div>
+              <div class="pos-card-title">Top Products</div>
+              <div class="pos-card-sub">Best sellers this week</div>
+            </div>
+            <span class="card-chip">Week</span>
+          </div>
+          <div id="topProducts"></div>
+        </div>
+      </div>
+
+      <!-- Payment Methods -->
+      <div class="col-12 col-md-5 fade-up delay-5">
+        <div class="pos-card">
+          <div class="mb-3">
+            <div class="pos-card-title">Payment Methods</div>
+            <div class="pos-card-sub">Transaction split today</div>
+          </div>
+          <div style="height:200px;position:relative">
+            <canvas id="paymentChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FOOTER ── -->
+    <div class="text-center pt-2 pb-1 fade-up delay-6" style="font-size:11px;color:var(--text-muted)">
+      NEXPOS Admin Panel &nbsp;·&nbsp; v2.4.1 &nbsp;·&nbsp; All systems operational
+      <span style="color:var(--green)">●</span>
+    </div>
+
+  </main>
+</div>
+{% endblock %}
