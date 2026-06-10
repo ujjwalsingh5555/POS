@@ -24,15 +24,14 @@
     <button class="nex-modal-btn" id="nexModalBtn" onclick="closeNexModal()">Got it</button>
   </div>
 </div>
-{% if messages %}
+{% for msg in messages %}
 <script>
-  window._nexMessages = [
-    {% for msg in messages %}
-      {"type":"{{ msg.tags|default:'success' }}","text":"{{ msg|escapejs }}"}{% if not forloop.last %},{% endif %}
-    {% endfor %}
-  ];
+window.nexMessages.push({
+    type: "{{ msg.tags }}",
+    text: "{{ msg|escapejs }}"
+});
 </script>
-{% endif %}
+{% endfor %}
 
 <div id="mainContent">
   <!-- TOPBAR -->

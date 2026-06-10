@@ -29,14 +29,12 @@ def login(request):
             return redirect('/login')
 
         # Role check
-        if str(user.role.id) != str(selected_role):
+        if (user.role.role_name) != (selected_role):
             messages.error(request, "Invalid role selection")
             return redirect('/login')
 
         # Session create
         request.session['user_id'] = user.id
-
-        messages.success(request, "Login successful")
         return redirect('/dashboard')
 
     return render(request, 'Login.html')
@@ -112,4 +110,11 @@ def staff_create(request):
     return render(request, 'staff_create.html',{'roles':roles})
 
 
+def logout(request):
+    request.session.flush()
+    messages.success(request, "Logout successful")
+    return redirect('/login')
 
+def show_user(request):
+    users = signup.objects.all()
+    return render(request, 'show_user.html', {'users': users})

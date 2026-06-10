@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.shortcuts import render
 from django.contrib.auth.hashers import make_password
 
@@ -7,6 +8,7 @@ def base(request):
 
 
 def dashboard(request):
+    messages.success(request, "Login successful")
     return render(request, 'dashboard.html')
 
 

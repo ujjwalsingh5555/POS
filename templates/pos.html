@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXPOS — Point of Sale</title>
+  <!-- Bootstrap 5 + Bootstrap Icons (CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <style>
+    :root {
+      --pos-bg: #0f0f1a;
+      --pos-bg-2: #141225;
+      --pos-panel: #1a1730;
+      --pos-panel-2: #211d3a;
+      --pos-border: #2a2647;
+      --pos-purple: #7c5cff;
+      --pos-purple-2: #9d7cff;
+      --pos-text: #e9e7f5;
+      --pos-muted: #8b86a8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background-color: var(--pos-bg);
+      color: var(--pos-text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .pos-wrap { height: 100vh; display: flex; flex-direction: column; }
+
+    /* Topbar */
+    .pos-topbar {
+      background-color: var(--pos-bg-2);
+      border-bottom: 1px solid var(--pos-border);
+      flex-shrink: 0;
+    }
+    .pos-brand-logo {
+      width: 38px; height: 38px;
+      display: grid; place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--pos-purple), var(--pos-purple-2));
+      color: #fff; font-size: 1.1rem;
+    }
+    .pos-search .form-control,
+    .pos-search .input-group-text {
+      background-color: var(--pos-panel);
+      border: 1px solid var(--pos-border);
+      color: var(--pos-text);
+    }
+    .pos-search .input-group-text { border-right: none; color: var(--pos-muted); }
+    .pos-search .form-control { border-left: none; }
+    .pos-search .form-control::placeholder { color: var(--pos-muted); }
+    .pos-search .form-control:focus { box-shadow: none; border-color: var(--pos-purple); }
+    .pos-icon-btn {
+      width: 40px; height: 40px;
+      display: grid; place-items: center;
+      border-radius: 10px;
+      background-color: var(--pos-panel);
+      border: 1px solid var(--pos-border);
+      color: var(--pos-purple-2);
+      cursor: pointer;
+    }
+    .pos-icon-btn:hover { background-color: var(--pos-panel-2); }
+
+    /* Body layout */
+    .pos-body { flex: 1; display: flex; overflow: hidden; }
+
+    /* Category sidebar */
+    .pos-cats {
+      background-color: var(--pos-bg-2);
+      border-right: 1px solid var(--pos-border);
+      width: 250px; flex-shrink: 0; overflow-y: auto;
+      padding: 16px 12px;
+    }
+    .pos-cat {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; border-radius: 12px;
+      color: var(--pos-muted); cursor: pointer; font-weight: 500;
+      border: 1px solid transparent; white-space: nowrap;
+      margin-bottom: 6px;
+    }
+    .pos-cat i { flex-shrink: 0; }
+    .pos-cat:hover { color: var(--pos-text); background-color: var(--pos-panel); }
+    .pos-cat.active {
+      color: #fff;
+      background: linear-gradient(135deg, var(--pos-purple), var(--pos-purple-2));
+    }
+
+    /* Product grid */
+    .pos-products { flex: 1; overflow-y: auto; padding: 20px; }
+    .section-title { font-weight: 700; margin-bottom: 14px; }
+    .pos-card {
+      background-color: var(--pos-panel);
+      border: 1px solid var(--pos-border);
+      border-radius: 14px; overflow: hidden; cursor: pointer;
+      transition: transform .12s ease, border-color .12s ease;
+      height: 100%;
+    }
+    .pos-card:hover { transform: translateY(-3px); border-color: var(--pos-purple); }
+    .pos-card-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+    .pos-card-body { padding: 10px; }
+    .pos-card-name { font-size: .82rem; font-weight: 600; line-height: 1.2; }
+    .pos-card-price { font-size: .85rem; font-weight: 700; color: var(--pos-purple-2); }
+
+    /* Order panel */
+    .pos-order {
+      background-color: var(--pos-bg-2);
+      border-left: 1px solid var(--pos-border);
+      width: 360px; flex-shrink: 0;
+      display: flex; flex-direction: column;
+    }
+    .pos-order-head {
+      background: linear-gradient(135deg, var(--pos-purple), var(--pos-purple-2));
+      color: #fff; padding: 16px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .pos-order-list { overflow-y: auto; flex: 1; padding: 16px; }
+    .pos-order-item {
+      background-color: var(--pos-panel);
+      border: 1px solid var(--pos-border);
+      border-radius: 12px; padding: 12px;
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 10px;
+    }
+    .pos-qty-btn {
+      width: 26px; height: 26px;
+      display: grid; place-items: center;
+      border-radius: 50%; background-color: var(--pos-purple);
+      color: #fff; border: none; font-size: .8rem; cursor: pointer;
+    }
+    .pos-qty-btn:hover { background-color: var(--pos-purple-2); }
+    .pos-trash { color: #f87171; background: none; border: none; cursor: pointer; }
+    .pos-footer { padding: 16px 18px; border-top: 1px solid var(--pos-border); }
+    .pos-divider { border-top: 1px dashed var(--pos-border); margin: 12px 0; }
+    .pos-muted { color: var(--pos-muted); }
+    .pos-pay-btn {
+      flex: 1; background-color: var(--pos-panel);
+      border: 1px solid var(--pos-border); color: var(--pos-muted);
+      border-radius: 10px; font-size: .82rem; font-weight: 600; padding: 10px;
+      cursor: pointer;
+    }
+    .pos-pay-btn.active {
+      background: linear-gradient(135deg, var(--pos-purple), var(--pos-purple-2));
+      color: #fff; border-color: transparent;
+    }
+    .pos-place-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--pos-purple), var(--pos-purple-2));
+      color: #fff; border: none; border-radius: 12px;
+      font-weight: 700; padding: 14px; cursor: pointer;
+    }
+    .pos-place-btn:hover { filter: brightness(1.08); }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-thumb { background-color: var(--pos-border); border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <div class="pos-wrap">
+    <!-- Topbar -->
+    <header class="pos-topbar d-flex align-items-center gap-3 px-3 py-2">
+      <div class="d-flex align-items-center gap-2">
+        <div class="pos-brand-logo"><i class="bi bi-bag-check-fill"></i></div>
+        <div>
+          <div class="fw-bold lh-1">NEXPOS</div>
+          <small class="pos-muted" style="font-size:.7rem;">Point of Sale</small>
+        </div>
+      </div>
+      <div class="pos-search input-group flex-grow-1" style="max-width:520px;">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input id="search" type="text" class="form-control" placeholder="Search products..." oninput="render()" />
+      </div>
+      <div class="d-flex align-items-center gap-2 ms-auto">
+        <div class="pos-icon-btn"><i class="bi bi-receipt"></i></div>
+        <div class="pos-icon-btn"><i class="bi bi-arrow-repeat"></i></div>
+        <div class="pos-icon-btn"><i class="bi bi-calendar-event"></i></div>
+        <div class="pos-icon-btn"><i class="bi bi-bell"></i></div>
+      </div>
+    </header>
+
+    <!-- Body -->
+    <div class="pos-body">
+      <!-- Categories -->
+      <nav class="pos-cats" id="cats"></nav>
+
+      <!-- Products -->
+      <main class="pos-products" id="products"></main>
+
+      <!-- Order panel -->
+      <aside class="pos-order">
+        <div class="pos-order-head">
+          <span class="fw-bold text-uppercase" style="letter-spacing:.5px;">Current Order</span>
+          <span class="d-flex align-items-center gap-1" style="font-size:.8rem;opacity:.9;">
+            <i class="bi bi-info-circle"></i> Order Info
+          </span>
+        </div>
+        <div class="pos-order-list" id="orderList"></div>
+        <div class="pos-footer">
+          <div class="d-flex justify-content-between mb-1">
+            <span class="pos-muted">Subtotal</span>
+            <span id="subtotal" class="fw-semibold">₹0.00</span>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="pos-muted">Tax (5%)</span>
+            <span id="tax" class="fw-semibold">₹0.00</span>
+          </div>
+          <div class="pos-divider"></div>
+          <div class="d-flex justify-content-between mb-3">
+            <span class="fw-bold">Total</span>
+            <span id="total" class="fw-bold" style="color:var(--pos-purple-2);">₹0.00</span>
+          </div>
+          <div class="pos-muted mb-2" style="font-size:.8rem;">Payment Method</div>
+          <div class="d-flex gap-2 mb-3">
+            <button class="pos-pay-btn active" data-pay="Cash" onclick="selectPay(this)"><i class="bi bi-cash"></i> Cash</button>
+            <button class="pos-pay-btn" data-pay="Card" onclick="selectPay(this)"><i class="bi bi-credit-card"></i> Card</button>
+            <button class="pos-pay-btn" data-pay="Wallet" onclick="selectPay(this)"><i class="bi bi-wallet2"></i> Wallet</button>
+          </div>
+          <button class="pos-place-btn" onclick="placeOrder()">Place Order</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const CATEGORIES = [
+      { id: 'all', name: 'All Categories', icon: 'bi-grid' },
+      { id: 'biryani', name: 'Biryani', icon: 'bi-egg-fried' },
+      { id: 'rice', name: 'Fried Rice & Noodles', icon: 'bi-bowl' },
+      { id: 'beverages', name: 'Beverages', icon: 'bi-cup-straw' },
+      { id: 'dessert', name: 'Dessert', icon: 'bi-cake2' },
+    ];
+
+    const PRODUCTS = [
+      { id: 1, name: 'Fish Biryani', price: 250, cat: 'biryani', img: '/food/fish-biryani.png' },
+      { id: 2, name: 'Egg Biryani', price: 195, cat: 'biryani', img: '/food/egg-biryani.png' },
+      { id: 3, name: 'Chicken Biryani', price: 115, cat: 'biryani', img: '/food/chicken-biryani.png' },
+      { id: 4, name: 'Prawn Biryani', price: 295, cat: 'biryani', img: '/food/prawn-biryani.png' },
+      { id: 5, name: 'Vegetable Fried Rice', price: 185, cat: 'rice', img: '/food/veg-fried-rice.png' },
+      { id: 6, name: 'Chicken Fried Rice', price: 295, cat: 'rice', img: '/food/chicken-fried-rice.png' },
+      { id: 7, name: 'Veg Hakka Noodles', price: 115, cat: 'rice', img: '/food/hakka-noodles.png' },
+      { id: 8, name: 'Schezwan Noodles', price: 185, cat: 'rice', img: '/food/schezwan-noodles.png' },
+    ];
+
+    let activeCat = 'all';
+    let payMethod = 'Cash';
+    const cart = {}; // id -> qty
+
+    function renderCats() {
+      document.getElementById('cats').innerHTML = CATEGORIES.map(c => `
+        <div class="pos-cat ${c.id === activeCat ? 'active' : ''}" onclick="setCat('${c.id}')">
+          <i class="bi ${c.icon}"></i><span>${c.name}</span>
+        </div>`).join('');
+    }
+
+    function setCat(id) { activeCat = id; renderCats(); render(); }
+
+    function render() {
+      const term = document.getElementById('search').value.toLowerCase();
+      let list = PRODUCTS.filter(p =>
+        (activeCat === 'all' || p.cat === activeCat) && p.name.toLowerCase().includes(term)
+      );
+      // group by category
+      const groups = {};
+      list.forEach(p => { (groups[p.cat] ||= []).push(p); });
+      let html = '';
+      Object.keys(groups).forEach(catId => {
+        const catName = CATEGORIES.find(c => c.id === catId)?.name || '';
+        html += `<h5 class="section-title">${catName}</h5><div class="row g-3 mb-4">`;
+        html += groups[catId].map(p => `
+          <div class="col-6 col-md-4 col-xl-3">
+            <div class="pos-card" onclick="addToCart(${p.id})">
+              <img class="pos-card-img" src="${p.img}" alt="${p.name}" />
+              <div class="pos-card-body">
+                <div class="pos-card-name mb-1">${p.name}</div>
+                <div class="pos-card-price">₹${p.price.toFixed(2)}</div>
+              </div>
+            </div>
+          </div>`).join('');
+        html += `</div>`;
+      });
+      document.getElementById('products').innerHTML = html || '<p class="pos-muted">No products found.</p>';
+    }
+
+    function addToCart(id) { cart[id] = (cart[id] || 0) + 1; renderOrder(); }
+    function changeQty(id, d) {
+      cart[id] = (cart[id] || 0) + d;
+      if (cart[id] <= 0) delete cart[id];
+      renderOrder();
+    }
+    function removeItem(id) { delete cart[id]; renderOrder(); }
+    function selectPay(btn) {
+      payMethod = btn.dataset.pay;
+      document.querySelectorAll('.pos-pay-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function renderOrder() {
+      const ids = Object.keys(cart);
+      const listEl = document.getElementById('orderList');
+      if (!ids.length) {
+        listEl.innerHTML = '<p class="pos-muted text-center mt-4">No items added yet.</p>';
+      } else {
+        listEl.innerHTML = ids.map(id => {
+          const p = PRODUCTS.find(x => x.id == id);
+          const qty = cart[id];
+          return `
+            <div class="pos-order-item">
+              <div class="flex-grow-1">
+                <div class="fw-semibold" style="font-size:.85rem;">${p.name}</div>
+                <div class="pos-card-price">₹${p.price.toFixed(2)}</div>
+              </div>
+              <button class="pos-qty-btn" onclick="changeQty(${id},-1)"><i class="bi bi-dash"></i></button>
+              <span class="fw-semibold">${qty}</span>
+              <button class="pos-qty-btn" onclick="changeQty(${id},1)"><i class="bi bi-plus"></i></button>
+              <button class="pos-trash" onclick="removeItem(${id})"><i class="bi bi-trash"></i></button>
+            </div>`;
+        }).join('');
+      }
+      const subtotal = ids.reduce((s, id) => s + PRODUCTS.find(x => x.id == id).price * cart[id], 0);
+      const tax = subtotal * 0.05;
+      document.getElementById('subtotal').textContent = '₹' + subtotal.toFixed(2);
+      document.getElementById('tax').textContent = '₹' + tax.toFixed(2);
+      document.getElementById('total').textContent = '₹' + (subtotal + tax).toFixed(2);
+    }
+
+    function placeOrder() {
+      const ids = Object.keys(cart);
+      if (!ids.length) { alert('Cart is empty!'); return; }
+      const total = document.getElementById('total').textContent;
+      alert('Order placed!\nPayment: ' + payMethod + '\nTotal: ' + total);
+      for (const k in cart) delete cart[k];
+      renderOrder();
+    }
+
+    renderCats();
+    render();
+    renderOrder();
+  </script>
+</body>
+</html>

@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+{% block extra_css %}
+<link href="{% static 'CSS/Admincss/dashboard.css' %}" rel="stylesheet"/>
+{% endblock %}
+{% for message in messages %}
+<div class="toast-pos" id="pageToast" data-tag="{{ message.tags }}">
+  <i class="ti {% if message.tags == 'success' %}ti-check{% elif message.tags == 'error' %}ti-x{% elif message.tags == 'warning' %}ti-alert-triangle{% else %}ti-info-circle{% endif %}"></i>
+  <span>{{ message }}</span>
+</div>
+{% endfor %}
 <div id="mainContent">
 
   <!-- TOPBAR -->
@@ -340,4 +349,17 @@
 
   </main>
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  const toast = document.getElementById('pageToast');
+  
+  // Show
+  setTimeout(() => toast.classList.add('show'), 100);
+  
+  // Hide after 2 seconds
+  setTimeout(() => toast.classList.remove('show'), 2000);
+});
+</script>
 {% endblock %}
