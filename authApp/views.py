@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.hashers import make_password
 from .models import Role, signup
 from django.contrib import messages
+from django.contrib.auth.hashers import check_password
 
 
 # Create your views here.
@@ -10,23 +11,34 @@ from django.contrib import messages
         # =========================
 def login(request):
     if request.method == 'POST':
-        mobile=request.POST.get('mobile')
-        password=request.POST.get('password')
-        selected_role=request.POST.get('role')
-        user=signup.objects.filter(mobile_no=mobile).first()
+        mobile = request.POST.get('mobile')
+        password = request.POST.get('password')
+        selected_role = request.POST.get('role')
+        user = signup.objects.filter(mobile_no=mobile).first()
+        # Mobile check
         if not user:
-            messages.error(request,"Invalid mobile number")
+            messages.error(request, "Invalid mobile number")
             return redirect('/login')
+        # Active check
         if not user.is_active:
-            messages.error(request,"Your account is inactive. please contact admin")
+            messages.error(request, "Your account is inactive. Please contact admin")
             return redirect('/login')
-        if user.role.id == selected_role:
-            messages.error(request,'Invalid role selection')
-            print(user.role.id,selected_role)
-            return redirect('/dashboard')
+        # Password check
+        if not check_password(password, user.password):
+            messages.error(request, "Invalid password")
+            return redirect('/login')
+
+        # Role check
+        if str(user.role.id) != str(selected_role):
+            messages.error(request, "Invalid role selection")
+            return redirect('/login')
+
+        # Session create
         request.session['user_id'] = user.id
-        messages.success(request,"Login successful")
+
+        messages.success(request, "Login successful")
         return redirect('/dashboard')
+
     return render(request, 'Login.html')
 
         
